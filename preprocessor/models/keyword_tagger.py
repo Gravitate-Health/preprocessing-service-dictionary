@@ -115,8 +115,9 @@ def tag_html_with_keywords(
         result.tagged_html = html
         return result
 
-    # Parse HTML
-    soup = BeautifulSoup(html, "lxml")
+    # Parse HTML using html.parser to avoid wrapping with <html><body> tags
+    # This keeps the original FHIR-compliant structure (root should be <div xmlns="...">)
+    soup = BeautifulSoup(html, "html.parser")
 
     # Get all known CSS classes for skipping already-tagged elements
     known_classes = list(set(concept.css_class for concept in keywords.values()))
