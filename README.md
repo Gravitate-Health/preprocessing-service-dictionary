@@ -7,6 +7,7 @@
 This service provides robust preprocessing for FHIR ePI (electronic Product Information) bundles, supporting extraction, validation, and modification of both FHIR extensions and embedded HTML content. It is designed for pharmaceutical and healthcare data pipelines, enabling safe and flexible manipulation of FHIR R4 resources, including custom extensions and XHTML narratives.
 
 ### Key Features
+
 - FhirEPI model for structured ePI bundle parsing
 - HtmlElementLink extension management (CRUD operations)
 - **Recursive HTML content extraction** from nested composition sections
@@ -21,11 +22,13 @@ This service provides robust preprocessing for FHIR ePI (electronic Product Info
 ### 1. Local Setup
 
 #### Prerequisites
+
 - Python 3.12+
 - (Optional) Docker
 - (Optional) Virtual environment
 
 #### Install dependencies
+
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
@@ -33,6 +36,7 @@ pip install -r requirements.txt
 ```
 
 #### Run tests
+
 ```powershell
 python test_html_element_link_standalone.py
 python test_html_content_manager_standalone.py
@@ -41,6 +45,7 @@ python test_html_content_manager_standalone.py
 ### 2. Docker Usage
 
 #### Build and run the service
+
 ```bash
 docker build -t preprocessing-service .
 docker run --rm -p 8080:8080 preprocessing-service
@@ -49,6 +54,7 @@ docker run --rm -p 8080:8080 preprocessing-service
 **Note:** The Docker image uses Python 3.12-alpine for compatibility with the service dependencies.
 
 #### Generate server code from OpenAPI (if needed)
+
 ```powershell
 docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate -i https://raw.githubusercontent.com/Gravitate-Health/preprocessing-service-example/refs/heads/main/openapi.yaml -g python-flask -o /local/ --additional-properties=packageName=preprocessor
 ```
@@ -61,6 +67,7 @@ Images are published automatically to GitHub Container Registry (GHCR) by CI for
 - For forks: `ghcr.io/<your-github-username-or-org>/<your-fork-repo>`
 
 #### Pull
+
 ```powershell
 docker pull ghcr.io/gravitate-health/preprocessing-service-example-python:main
 # or a release tag, when available
@@ -68,18 +75,22 @@ docker pull ghcr.io/gravitate-health/preprocessing-service-example-python:v1.0.0
 ```
 
 #### Run
+
 ```powershell
 docker run --rm -p 8080:8080 ghcr.io/gravitate-health/preprocessing-service-example-python:main
 ```
 
 #### Authenticate (if needed)
+
 If the image is private or your org requires auth, login to GHCR:
+
 ```powershell
 $env:CR_PAT = "<YOUR_GH_PAT_WITH_packages:read>"
 $env:CR_PAT | docker login ghcr.io -u <YOUR_GH_USERNAME> --password-stdin
 ```
 
 ### 3. API Endpoints
+
 - See `openapi/openapi.yaml` for full specification.
 - Main endpoint: `/preprocess` (accepts FHIR Bundle, returns processed bundle)
 
@@ -90,15 +101,17 @@ $env:CR_PAT | docker login ghcr.io -u <YOUR_GH_USERNAME> --password-stdin
 **Purpose:** Manage FHIR HtmlElementLink extensions in Composition resources.
 
 **Key Functions:**
+
 - `list_html_element_links(composition)`
 - `add_html_element_link(composition, element_class, concept, replace_if_exists=False)`
 - `remove_html_element_link(composition, element_class)`
 - `get_html_element_link(composition, element_class)`
 
 **Example Usage:**
+
 ```python
 from preprocessor.models.html_element_link_manager import (
-	list_html_element_links, add_html_element_link, remove_html_element_link
+ list_html_element_links, add_html_element_link, remove_html_element_link
 )
 
 # List all HtmlElementLink extensions
@@ -116,6 +129,7 @@ remove_html_element_link(composition, 'section-title')
 **Purpose:** Extract, analyze, and modify HTML content in FHIR Composition `text.div` and nested sections.
 
 **Key Functions:**
+
 - `get_html_content(composition)` - Extract HTML from composition text.div
 - `get_all_html_content(composition)` - **Recursively extract HTML from all sections and subsections**
 - `update_html_content(composition, new_html)` - Update composition HTML
@@ -126,6 +140,7 @@ remove_html_element_link(composition, 'section-title')
 - `get_html_structure_summary(html)` - Analyze HTML structure
 
 **Example Usage:**
+
 ```python
 from preprocessor.models.html_content_manager import (
     get_html_content, get_all_html_content, update_section_html, 
@@ -162,6 +177,7 @@ print(summary)
 ```
 
 **FhirEPI Model Integration:**
+
 ```python
 from preprocessor.models.fhir_epi import FhirEPI
 
@@ -175,11 +191,13 @@ all_html = epi.get_all_html_content()
 ## Testing
 
 Standalone test runners are provided for all major components:
+
 - `test_html_element_link_standalone.py` - Test HtmlElementLink extension management
 - `test_html_content_manager_standalone.py` - Test HTML content operations
 - `test_recursive_html_extraction.py` - **Test recursive HTML extraction from nested sections**
 
 Run with:
+
 ```bash
 python3 test_html_element_link_standalone.py
 python3 test_html_content_manager_standalone.py
@@ -189,9 +207,11 @@ python3 test_recursive_html_extraction.py
 ### Examples
 
 Comprehensive examples demonstrating all features:
+
 - `example_recursive_html_extraction.py` - **Recursive HTML extraction examples with 5 different use cases**
 
 Run examples:
+
 ```bash
 python3 example_recursive_html_extraction.py
 ```
@@ -199,6 +219,7 @@ python3 example_recursive_html_extraction.py
 ## Documentation
 
 See the following markdown files for detailed guides and examples:
+
 - `HTMLELEMENTLINK_GUIDE.md`
 - `HTMLELEMENTLINK_QUICK_REFERENCE.md`
 - `HTMLELEMENTLINK_EXAMPLES.md`
