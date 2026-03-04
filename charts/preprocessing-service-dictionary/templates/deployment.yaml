@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "preprocessing-service-dictionary.fullname" . }}
+  labels:
+    {{- include "preprocessing-service-dictionary.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "preprocessing-service-dictionary.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "preprocessing-service-dictionary.selectorLabels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+        - name: {{ include "preprocessing-service-dictionary.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          {{- if .Values.config.enabled }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "preprocessing-service-dictionary.fullname" . }}
+            {{- if .Values.secrets.enabled }}
+            - secretRef:
+                name: {{ include "preprocessing-service-dictionary.fullname" . }}
+            {{- end }}
+          {{- else if .Values.secrets.enabled }}
+          envFrom:
+            - secretRef:
+                name: {{ include "preprocessing-service-dictionary.fullname" . }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

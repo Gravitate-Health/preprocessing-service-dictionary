@@ -1,0 +1,6 @@
+apiVersion: v2
+name: preprocessing-service-dictionary
+description: A Helm chart for deploying preprocessing-service-dictionary
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

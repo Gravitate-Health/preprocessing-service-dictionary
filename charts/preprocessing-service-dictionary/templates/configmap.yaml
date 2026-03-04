@@ -1,0 +1,12 @@
+{{- if .Values.config.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "preprocessing-service-dictionary.fullname" . }}
+  labels:
+    {{- include "preprocessing-service-dictionary.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.config.env }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,52 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/gravitate-health/preprocessing-service-dictionary
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+networking:
+  # Set to true to create a Kubernetes Ingress resource for this service.
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: preprocessing.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+
+  # Set to true when routing is managed by Istio (e.g. Gateway/VirtualService).
+  # Keep ingress.enabled=false when Istio is the entrypoint to avoid duplicate routing.
+  istio:
+    enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+config:
+  enabled: true
+  env:
+    LOG_LEVEL: info
+
+secrets:
+  enabled: true
+  env:
+    API_TOKEN: ""
+
+podAnnotations: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

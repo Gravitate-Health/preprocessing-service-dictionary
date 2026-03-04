@@ -227,6 +227,30 @@ See the following markdown files for detailed guides and examples:
 - `HTMLELEMENTLINK_INDEX.md`
 - `HTMLELEMENTLINK_DELIVERABLES.md`
 
+## Deployment
+
+### Deploy via Helm (OCI)
+
+```bash
+# Login to registry (if private)
+helm registry login ghcr.io
+
+# Deploy directly from the registry
+helm install my-release oci://ghcr.io/<your-org>/charts/<chart-name> --version <version>
+```
+
+This repository provides a Helm chart under `charts/preprocessing-service-dictionary` that can be published as an OCI artifact to GHCR, allowing deployments without cloning the source repository.
+
+### Local Development
+
+```bash
+# Validate chart syntax and conventions
+helm lint charts/preprocessing-service-dictionary
+
+# Render manifests locally
+helm template my-release charts/preprocessing-service-dictionary
+```
+
 ## License
 
 See `LICENSE` for details.
