@@ -41,11 +41,6 @@ config:
   env:
     LOG_LEVEL: info
 
-secrets:
-  enabled: true
-  env:
-    API_TOKEN: ""
-
 podAnnotations: {}
 nodeSelector: {}
 tolerations: []

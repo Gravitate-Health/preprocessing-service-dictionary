@@ -30,14 +30,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "preprocessing-service-dictionary.fullname" . }}
-            {{- if .Values.secrets.enabled }}
-            - secretRef:
-                name: {{ include "preprocessing-service-dictionary.fullname" . }}
-            {{- end }}
-          {{- else if .Values.secrets.enabled }}
-          envFrom:
-            - secretRef:
-                name: {{ include "preprocessing-service-dictionary.fullname" . }}
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
